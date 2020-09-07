@@ -126,7 +126,13 @@ describe("Foreign Keys", () => {
     "should be able to delete movie",
     async done => {
       const movieId = 5915;
-      const query = `delete movie by id and all data from all linked tables`;
+      const query = `delete from movies where not EXISTS
+      (select null from movie_actors join movie_directors join movie_genres
+      join movie_keywords join movie_production_companies
+      join movie_ratings on movies.id = movie_actors.movie_id
+      and movie_directors.movie_id = movies.id and movie_genres.movie_id = movies.id
+      and movie_keywords.movie_id = movies.id
+      and movie_production_companies.movie_id = movies.id)`;
 
       await db.delete(query);
 
